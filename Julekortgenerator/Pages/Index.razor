@@ -48,10 +48,18 @@
 
     <div class="col-2 p-5 pt-0">
         <RadzenLabel Text="Font" />
+        <h4 class="mt-4">Vertical orientation</h4>
+                <RadzenRadioButtonList @bind-Value=@fontInput TValue="int" Orientation="Orientation.Vertical" Change=@((args) => Onchange(args, "RadioButtonList with vertical orientation"))>
+                    <Items>
+                        <RadzenRadioButtonListItem Text="Arial" Value="1" />
+                        <RadzenRadioButtonListItem Text="Courier New" Value="2" />
+                        <RadzenRadioButtonListItem Text="Brush Script MT" Value="3" />
+                    </Items>
+                </RadzenRadioButtonList>
+        </div>
     </div>
 
 
-</div>
 
 <div class="row">
     <div class="col-12">
@@ -83,7 +91,7 @@
     </div>
 </div>
 
-<div class="container" style="background-color: @backGroundColor; border: 4px double @borderColor;" id="christmasCard">
+<div class="container" style="background-color: @backGroundColor; border: 4px double @borderColor; font-family: @MyFont" id="christmasCard">
     <div class="row">
         <div class="col-12 text-center" style="color: @textColor1">
             <h1>@header</h1>
@@ -142,25 +150,6 @@
         </div>
     </div>
     </div>
-@*
-    <div class="row mt-3 text-right">
-        <div class="col-12">
-            <img src="@image1" />
-        </div>
-    </div>
-    <div class="row mt-3 text-center">
-        <div class="col-12">
-            <img src="@image2" />
-        </div>
-    </div>
-
-    <div class="row mt-3 text-center">
-        <div class="col-12">
-            <img src="@image3" />
-        </div>
-    </div>
-*@
-    
 </div>
 
 
@@ -181,6 +170,35 @@
     private string image2 = "";
     private string image3 = "";
     const string ImageFormat = "image/jpeg";
+
+    public string MyFont { get; set; } = "'Courier New', monospace";
+
+    public class MyFont
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    IEnumerable<MyFont> data = new MyFont[]
+                {
+        new MyFont() {
+            Id = 1,
+             = "Orders"
+        },
+        new MyFont() {
+            Id = 2,
+            Name = "Employees"
+        },
+        new MyFont() {
+            Id = 3,
+           Name = "Customers"
+            } };
+
+            int value = 1;
+    int? nullableValue = null;
+
+
+
 
     private void IncrementCount() { }
 
