@@ -17,43 +17,42 @@
     <div class="col-2 p-5 pt-0">
         @*tekstboks overskrift*@
         <RadzenLabel Text="Overskrift:" />
-        <RadzenTextBox @bind-Value="@header" />
+        <RadzenTextBox @bind-Value="@ChristmasCard.Header" />
 
         <RadzenLabel Text="Tekstfarge" />
-        <RadzenColorPicker @bind-Value="@textColor1" />
+        <RadzenColorPicker @bind-Value="@ChristmasCard.TextColor1" />
     </div>
     <div class="col-2 p-5 pt-0">
         @*tekstboks mottaker*@
         <RadzenLabel Text="Mottaker:" />
-        <RadzenTextBox @bind-Value="@receiverName" />
+        <RadzenTextBox @bind-Value="@ChristmasCard.ReceiverName" />
         <RadzenLabel Text="Tekstfarge" />
-        <RadzenColorPicker @bind-Value="@textColor2" />
+        <RadzenColorPicker @bind-Value="@ChristmasCard.TextColor2" />
     </div>
     <div class="col-2 p-5 pt-0">
         @*tekstboks avsender*@
         <RadzenLabel Text="Avsender:" />
-        <RadzenTextBox @bind-Value="@senderName" />
+        <RadzenTextBox @bind-Value="@ChristmasCard.SenderName" />
         <RadzenLabel Text="Tekstfarge" />
-        <RadzenColorPicker @bind-Value="@textColor3" />
+        <RadzenColorPicker @bind-Value="@ChristmasCard.TextColor3" />
     </div>
 
 
     <div class="col-2 p-5 pt-0">
         <RadzenLabel Text="Hilsning:" />
-        <RadzenTextArea @bind-Value="@greeting" />
+        <RadzenTextArea @bind-Value="@ChristmasCard.Greeting" />
         <RadzenLabel Text="Tekstfarge" />
-        <RadzenColorPicker @bind-Value="@textColor4" />
+        <RadzenColorPicker @bind-Value="@ChristmasCard.TextColor4" />
 
     </div>
 
     <div class="col-2 p-5 pt-0">
         <RadzenLabel Text="Font" />
-        <h4 class="mt-4">Vertical orientation</h4>
-                <RadzenRadioButtonList @bind-Value=@fontInput TValue="int" Orientation="Orientation.Vertical" Change=@((args) => Onchange(args, "RadioButtonList with vertical orientation"))>
+                <RadzenRadioButtonList @bind-Value=@SelectedFont TValue="int" Orientation="Orientation.Vertical" Change="@FontSelected">
                     <Items>
-                        <RadzenRadioButtonListItem Text="Arial" Value="1" />
-                        <RadzenRadioButtonListItem Text="Courier New" Value="2" />
-                        <RadzenRadioButtonListItem Text="Brush Script MT" Value="3" />
+                        <RadzenRadioButtonListItem Text="Arial" Value="0" />
+                        <RadzenRadioButtonListItem Text="Courier New" Value="1" />
+                        <RadzenRadioButtonListItem Text="Brush Script MT" Value="2" />
                     </Items>
                 </RadzenRadioButtonList>
         </div>
@@ -64,21 +63,21 @@
 <div class="row">
     <div class="col-12">
         <RadzenLabel Text="Bakgrunnsfarge" />
-        <RadzenColorPicker @bind-Value="@backGroundColor" />
+        <RadzenColorPicker @bind-Value="@ChristmasCard.BackGroundColor" />
 
         <RadzenLabel Text="Farge på border rundt kortet" />
-        <RadzenColorPicker @bind-Value="@borderColor" />
+        <RadzenColorPicker @bind-Value="@ChristmasCard.BorderColor" />
 
 
 
         <RadzenLabel Text="Velg bilde 1:" />
-        <InputFile OnChange="args => LoadFiles(args, 1)" accept="image/*" />
+        <InputFile OnChange="args => LoadFiles(args, 0)" accept="image/*" />
 
         <RadzenLabel Text="Velg bilde 2:" />
-        <InputFile OnChange="args => LoadFiles(args, 2)" accept="image/*" />
+        <InputFile OnChange="args => LoadFiles(args, 1)" accept="image/*" />
 
         <RadzenLabel Text="Velg bilde 3:" />
-        <InputFile OnChange="args => LoadFiles(args, 3)" accept="image/*" />
+        <InputFile OnChange="args => LoadFiles(args, 2)" accept="image/*" />
 
         <RadzenButton Text="Lagre julekort..." ButtonStyle="ButtonStyle.Secondary" Click="GenerateCard" />
     </div>
@@ -91,61 +90,61 @@
     </div>
 </div>
 
-<div class="container" style="background-color: @backGroundColor; border: 4px double @borderColor; font-family: @MyFont" id="christmasCard">
+<div class="container" style="background-color: @ChristmasCard.BackGroundColor; border: 4px double @ChristmasCard.BorderColor; font-family: @ChristmasCard.MyFont" id="christmasCard">
     <div class="row">
-        <div class="col-12 text-center" style="color: @textColor1">
-            <h1>@header</h1>
+        <div class="col-12 text-center" style="color: @ChristmasCard.TextColor1">
+            <h1>@ChristmasCard.Header</h1>
         </div>
     </div>
     <div class="row">
-        <div class="col-12 text-center" style="color: @textColor2">
-            @if (!string.IsNullOrEmpty(receiverName))
+        <div class="col-12 text-center" style="color: @ChristmasCard.TextColor2">
+            @if (!string.IsNullOrEmpty(ChristmasCard.ReceiverName))
             {
-                <h2>Kjære @receiverName </h2>
+                <h2>Kjære @ChristmasCard.ReceiverName </h2>
             }
-            <h3 style="color: @textColor4">
-                @greeting
+            <h3 style="color: @ChristmasCard.TextColor4">
+                @ChristmasCard.Greeting
             </h3>
         </div>
     </div>
 
 
     <div class="row">
-        @if (string.IsNullOrEmpty(image2) && string.IsNullOrEmpty(image3))
+        @if (string.IsNullOrEmpty(ChristmasCard.Images[0]) && string.IsNullOrEmpty(ChristmasCard.Images[2]))
         {
             <div class="col-12">
-                <img src="@image1" class="img-fluid" />
+                <img src="@ChristmasCard.Images[0]" class="img-fluid" />
             </div>
         }
-        else if (string.IsNullOrEmpty(image3))
+        else if (string.IsNullOrEmpty(ChristmasCard.Images[2]))
         {
             <div class="col-6">
-                <img src="@image1" class="img-fluid" />
+                <img src="@ChristmasCard.Images[0]" class="img-fluid" />
 
             </div>
             <div class="col-6">
-                <img src="@image2" class="img-fluid" />
+                <img src="@ChristmasCard.Images[1]" class="img-fluid" />
             </div>
         }
         else
         {
              <div class="col-4">
-                <img src="@image1" class="img-fluid" />
+                <img src="@ChristmasCard.Images[0]" class="img-fluid" />
 
             </div>
             <div class="col-4">
-                <img src="@image2" class="img-fluid" />
+                <img src="@ChristmasCard.Images[1]" class="img-fluid" />
             </div>
               <div class="col-4">
-                <img src="@image3" class="img-fluid" />
+                <img src="@ChristmasCard.Images[2]" class="img-fluid" />
             </div>
         }
 
         <div class="row mt-3">
-        <div class="col-12 text-center" style="color: @textColor3">
-            @if (!string.IsNullOrEmpty(senderName))
+        <div class="col-12 text-center" style="color: @ChristmasCard.TextColor3">
+            @if (!string.IsNullOrEmpty(@ChristmasCard.SenderName))
             {
-                <h2>Hilsen @senderName</h2>
+                <h2>Hilsen @ChristmasCard.SenderName</h2>
             }
         </div>
     </div>
@@ -155,59 +154,22 @@
 
 
 @code {
-    string backGroundColor = "rgb(255, 40, 0)";
-    string borderColor = "rgb(255, 40, 0)";
-    string textColor1 = "rgb(255, 255, 255)";
-    string textColor2 = "rgb(255, 255, 255)";
-    string textColor3 = "rgb(255, 255, 255)";
-    string textColor4 = "rgb(255, 255, 255)";
-    private string header = "God jul!";
-    private string greeting = "";
-    private string receiverName = "";
-    private string senderName = "";
+    public ChristmasCard ChristmasCard { get; set; } = new ChristmasCard();
+    public string ImageFormat { get; set; } = "image/jpeg";
     public MemoryStream NewImage { get; set; }
-    private string image1 = "";
-    private string image2 = "";
-    private string image3 = "";
-    const string ImageFormat = "image/jpeg";
-
-    public string MyFont { get; set; } = "'Courier New', monospace";
-
-    public class MyFont
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
-
-    IEnumerable<MyFont> data = new MyFont[]
-                {
-        new MyFont() {
-            Id = 1,
-             = "Orders"
-        },
-        new MyFont() {
-            Id = 2,
-            Name = "Employees"
-        },
-        new MyFont() {
-            Id = 3,
-           Name = "Customers"
-            } };
-
-            int value = 1;
-    int? nullableValue = null;
-
-
-
-
-    private void IncrementCount() { }
+    public int SelectedFont { get; set; } = 0;
+    private ChristmasCard[] ChristmasCards { get; set; }
+    private List<ChristmasCard> GeneratedChristmasCards { get; set; } = new List<ChristmasCard>();
 
 
     private async void GenerateCard()
     {
-
+        // Legg til generert julekort i liste
+        GeneratedChristmasCards.Add(ChristmasCard);
+        // Lagre liste til Array
+        ChristmasCards = GeneratedChristmasCards.ToArray();
+        // Lag bilde og last ned
         await JsRuntime.InvokeVoidAsync("takeScreenshot", "christmasCard");
-  
     }
 
     private async void LoadFiles(InputFileChangeEventArgs file, int imageNumber)
@@ -220,15 +182,15 @@
 
             if (imageNumber == 1)
             {
-                image1 = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
+                ChristmasCard.Images[0] = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
             }
             if (imageNumber == 2)
             {
-                image2 = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
+                ChristmasCard.Images[1] = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
             }
             if (imageNumber == 3)
             {
-                image3 = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
+                ChristmasCard.Images[2] = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
             }
             await InvokeAsync(StateHasChanged);
 
@@ -237,7 +199,21 @@
         {
             NotificationService.Notify(new NotificationMessage { Detail = "Klarte ikke å laste opp bilde!", Severity = NotificationSeverity.Success, Summary = $"Feilmelding : {e.Message}" });
         }
-
     }
-
+    
+    private void FontSelected()
+        {
+            if (SelectedFont == 0)
+            {
+                ChristmasCard.MyFont = "";
+            }
+            else if (SelectedFont == 1)
+             {
+                ChristmasCard.MyFont = "";
+            }
+             else if (SelectedFont == 2)
+             {
+                ChristmasCard.MyFont = "";
+            }
+        }
     }
