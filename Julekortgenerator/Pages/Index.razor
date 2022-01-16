@@ -185,25 +185,11 @@
     private void IncrementCount() { }
 
 
-
-
-    private async Task<string> CreateImage()
-    {
-        return await JsRuntime.InvokeAsync<string>("takeScreenshot", "christmasCard");
-    }
-
     private async void GenerateCard()
     {
-        var card = await CreateImage();
-        if (string.IsNullOrEmpty(card))
-        {
 
-        }
-        else
-        {
-            await JsRuntime.InvokeVoidAsync("jsSaveAsFile", "Julekort.png", Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(card)));
-            // return File(UTF8Encoding.UTF8.GetBytes(card), "application/force-download", "Julekort.png");
-        }
+        await JsRuntime.InvokeVoidAsync("takeScreenshot", "christmasCard");
+  
     }
 
     private async void LoadFiles(InputFileChangeEventArgs file, int imageNumber)
