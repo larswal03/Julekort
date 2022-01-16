@@ -1,0 +1,239 @@
+﻿@page "/"
+
+@inject NotificationService NotificationService
+@inject IJSRuntime JsRuntime
+
+<RadzenNotification />
+<PageTitle>Julekortgenerator</PageTitle>
+
+<div class="row">
+    <div class="col-12">
+        <h1>Design ditt julekort</h1>
+    </div>
+</div>
+
+<div class="row" >
+
+    <div class="col-2 p-5 pt-0">
+        @*tekstboks overskrift*@
+        <RadzenLabel Text="Overskrift:" />
+        <RadzenTextBox @bind-Value="@header" />
+
+        <RadzenLabel Text="Tekstfarge" />
+        <RadzenColorPicker @bind-Value="@textColor1" />
+    </div>
+    <div class="col-2 p-5 pt-0">
+        @*tekstboks mottaker*@
+        <RadzenLabel Text="Mottaker:" />
+        <RadzenTextBox @bind-Value="@receiverName" />
+        <RadzenLabel Text="Tekstfarge" />
+        <RadzenColorPicker @bind-Value="@textColor2" />
+    </div>
+    <div class="col-2 p-5 pt-0">
+        @*tekstboks avsender*@
+        <RadzenLabel Text="Avsender:" />
+        <RadzenTextBox @bind-Value="@senderName" />
+        <RadzenLabel Text="Tekstfarge" />
+        <RadzenColorPicker @bind-Value="@textColor3" />
+    </div>
+
+
+    <div class="col-2 p-5 pt-0">
+        <RadzenLabel Text="Hilsning:" />
+        <RadzenTextArea @bind-Value="@greeting" />
+        <RadzenLabel Text="Tekstfarge" />
+        <RadzenColorPicker @bind-Value="@textColor4" />
+
+    </div>
+
+    <div class="col-2 p-5 pt-0">
+        <RadzenLabel Text="Font" />
+    </div>
+
+
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <RadzenLabel Text="Bakgrunnsfarge" />
+        <RadzenColorPicker @bind-Value="@backGroundColor" />
+
+        <RadzenLabel Text="Farge på border rundt kortet" />
+        <RadzenColorPicker @bind-Value="@borderColor" />
+
+
+
+        <RadzenLabel Text="Velg bilde 1:" />
+        <InputFile OnChange="args => LoadFiles(args, 1)" accept="image/*" />
+
+        <RadzenLabel Text="Velg bilde 2:" />
+        <InputFile OnChange="args => LoadFiles(args, 2)" accept="image/*" />
+
+        <RadzenLabel Text="Velg bilde 3:" />
+        <InputFile OnChange="args => LoadFiles(args, 3)" accept="image/*" />
+
+        <RadzenButton Text="Lagre julekort..." ButtonStyle="ButtonStyle.Secondary" Click="GenerateCard" />
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <hr />
+    </div>
+</div>
+
+<div class="container" style="background-color: @backGroundColor; border: 4px double @borderColor;" id="christmasCard">
+    <div class="row">
+        <div class="col-12 text-center" style="color: @textColor1">
+            <h1>@header</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-center" style="color: @textColor2">
+            @if (!string.IsNullOrEmpty(receiverName))
+            {
+                <h2>Kjære @receiverName </h2>
+            }
+            <h3 style="color: @textColor4">
+                @greeting
+            </h3>
+        </div>
+    </div>
+
+
+    <div class="row">
+        @if (string.IsNullOrEmpty(image2) && string.IsNullOrEmpty(image3))
+        {
+            <div class="col-12">
+                <img src="@image1" class="img-fluid" />
+            </div>
+        }
+        else if (string.IsNullOrEmpty(image3))
+        {
+            <div class="col-6">
+                <img src="@image1" class="img-fluid" />
+
+            </div>
+            <div class="col-6">
+                <img src="@image2" class="img-fluid" />
+            </div>
+        }
+        else
+        {
+             <div class="col-4">
+                <img src="@image1" class="img-fluid" />
+
+            </div>
+            <div class="col-4">
+                <img src="@image2" class="img-fluid" />
+            </div>
+              <div class="col-4">
+                <img src="@image3" class="img-fluid" />
+            </div>
+        }
+
+        <div class="row mt-3">
+        <div class="col-12 text-center" style="color: @textColor3">
+            @if (!string.IsNullOrEmpty(senderName))
+            {
+                <h2>Hilsen @senderName</h2>
+            }
+        </div>
+    </div>
+    </div>
+@*
+    <div class="row mt-3 text-right">
+        <div class="col-12">
+            <img src="@image1" />
+        </div>
+    </div>
+    <div class="row mt-3 text-center">
+        <div class="col-12">
+            <img src="@image2" />
+        </div>
+    </div>
+
+    <div class="row mt-3 text-center">
+        <div class="col-12">
+            <img src="@image3" />
+        </div>
+    </div>
+*@
+    
+</div>
+
+
+
+@code {
+    string backGroundColor = "rgb(255, 40, 0)";
+    string borderColor = "rgb(255, 40, 0)";
+    string textColor1 = "rgb(255, 255, 255)";
+    string textColor2 = "rgb(255, 255, 255)";
+    string textColor3 = "rgb(255, 255, 255)";
+    string textColor4 = "rgb(255, 255, 255)";
+    private string header = "God jul!";
+    private string greeting = "";
+    private string receiverName = "";
+    private string senderName = "";
+    public MemoryStream NewImage { get; set; }
+    private string image1 = "";
+    private string image2 = "";
+    private string image3 = "";
+    const string ImageFormat = "image/jpeg";
+
+    private void IncrementCount() { }
+
+
+
+
+    private async Task<string> CreateImage()
+    {
+        return await JsRuntime.InvokeAsync<string>("takeScreenshot", "christmasCard");
+    }
+
+    private async void GenerateCard()
+    {
+        var card = await CreateImage();
+        if (string.IsNullOrEmpty(card))
+        {
+
+        }
+        else
+        {
+            await JsRuntime.InvokeVoidAsync("jsSaveAsFile", "Julekort.png", Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(card)));
+            // return File(UTF8Encoding.UTF8.GetBytes(card), "application/force-download", "Julekort.png");
+        }
+    }
+
+    private async void LoadFiles(InputFileChangeEventArgs file, int imageNumber)
+    {
+        try
+        {
+            var resizedImage = await file.File.RequestImageFileAsync(ImageFormat, 800, 800);
+            NewImage = new MemoryStream();
+            await resizedImage.OpenReadStream().CopyToAsync(NewImage);
+
+            if (imageNumber == 1)
+            {
+                image1 = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
+            }
+            if (imageNumber == 2)
+            {
+                image2 = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
+            }
+            if (imageNumber == 3)
+            {
+                image3 = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
+            }
+            await InvokeAsync(StateHasChanged);
+
+        }
+        catch (Exception e)
+        {
+            NotificationService.Notify(new NotificationMessage { Detail = "Klarte ikke å laste opp bilde!", Severity = NotificationSeverity.Success, Summary = $"Feilmelding : {e.Message}" });
+        }
+
+    }
+
+    }
