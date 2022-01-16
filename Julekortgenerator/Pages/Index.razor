@@ -1,14 +1,14 @@
 ﻿@page "/"
 
-@inject NotificationService NotificationService
+@inject NotificationService NotificationService @*Notifikasjon som sendes om det er en feil med bildet*@
 @inject IJSRuntime JsRuntime
 
 <RadzenNotification />
-<PageTitle>Julekortgenerator</PageTitle>
+<PageTitle>Julekortgenerator</PageTitle> @*Tittelen på siden*@
 
 <div class="row">
     <div class="col-12">
-        <h1>Design ditt julekort</h1>
+        <h1>Design ditt julekort</h1> @*Overskriften på siden*@
     </div>
 </div>
 
@@ -18,7 +18,6 @@
         @*tekstboks overskrift*@
         <RadzenLabel Text="Overskrift:" />
         <RadzenTextBox @bind-Value="@ChristmasCard.Header" />
-
         <RadzenLabel Text="Tekstfarge" />
         <RadzenColorPicker @bind-Value="@ChristmasCard.TextColor1" />
     </div>
@@ -39,6 +38,7 @@
 
 
     <div class="col-2 p-5 pt-0">
+        @*tekstboks hilsning*@
         <RadzenLabel Text="Hilsning:" />
         <RadzenTextArea @bind-Value="@ChristmasCard.Greeting" />
         <RadzenLabel Text="Tekstfarge" />
@@ -47,14 +47,15 @@
     </div>
 
     <div class="col-2 p-5 pt-0">
+        @*radiobuttons for å velge fonter*@
         <RadzenLabel Text="Font" />
-                <RadzenRadioButtonList @bind-Value=@SelectedFont TValue="int" Orientation="Orientation.Vertical" Change="@FontSelected">
-                    <Items>
-                        <RadzenRadioButtonListItem Text="Arial" Value="0" />
-                        <RadzenRadioButtonListItem Text="Courier New" Value="1" />
-                        <RadzenRadioButtonListItem Text="Brush Script MT" Value="2" />
-                    </Items>
-                </RadzenRadioButtonList>
+        <RadzenRadioButtonList @bind-Value=@SelectedFont TValue="int" Orientation="Orientation.Vertical" Change="@FontSelected">
+            <Items>
+                   <RadzenRadioButtonListItem Text="Arial" Value="0" />
+                   <RadzenRadioButtonListItem Text="Courier New" Value="1" />
+                   <RadzenRadioButtonListItem Text="Garamond" Value="2" />
+            </Items>
+        </RadzenRadioButtonList>
         </div>
     </div>
 
@@ -62,14 +63,14 @@
 
 <div class="row">
     <div class="col-12">
+        @*bakgrunnsfarge color picker*@
         <RadzenLabel Text="Bakgrunnsfarge" />
         <RadzenColorPicker @bind-Value="@ChristmasCard.BackGroundColor" />
-
+        @*farge på border rundt kortet*@
         <RadzenLabel Text="Farge på border rundt kortet" />
         <RadzenColorPicker @bind-Value="@ChristmasCard.BorderColor" />
 
-
-
+        @*3 opplastningsbokser for 3 bilder*@
         <RadzenLabel Text="Velg bilde 1:" />
         <InputFile OnChange="args => LoadFiles(args, 0)" accept="image/*" />
 
@@ -79,6 +80,7 @@
         <RadzenLabel Text="Velg bilde 3:" />
         <InputFile OnChange="args => LoadFiles(args, 2)" accept="image/*" />
 
+        @*knapp som som genererer kortet som vi senere lagrer*@
         <RadzenButton Text="Lagre julekort..." ButtonStyle="ButtonStyle.Secondary" Click="GenerateCard" />
     </div>
 </div>
@@ -86,18 +88,21 @@
 
 <div class="row">
     <div class="col-12">
-        <hr />
+        <hr /> @*linjen som deler input og kortet*@
     </div>
 </div>
 
+@*denne diven inneholdeer alle elementene som ender opp på kortet. Stylen definerer alle de elementene jeg har i objektet*@
 <div class="container" style="background-color: @ChristmasCard.BackGroundColor; border: 4px double @ChristmasCard.BorderColor; font-family: @ChristmasCard.MyFont" id="christmasCard">
     <div class="row">
+        @*Koden for header på kortet*@
         <div class="col-12 text-center" style="color: @ChristmasCard.TextColor1">
             <h1>@ChristmasCard.Header</h1>
         </div>
     </div>
     <div class="row">
         <div class="col-12 text-center" style="color: @ChristmasCard.TextColor2">
+            @*hvis stringen er tom pritner vi navnet på mottakeren*@
             @if (!string.IsNullOrEmpty(ChristmasCard.ReceiverName))
             {
                 <h2>Kjære @ChristmasCard.ReceiverName </h2>
@@ -110,6 +115,9 @@
 
 
     <div class="row">
+        @*mye hardkoding her for å sørge for at riktig bilde printes til riktig tid. Løser dette med if og else if så
+          bildet printes til riktig tid
+        *@
         @if (string.IsNullOrEmpty(ChristmasCard.Images[0]) && string.IsNullOrEmpty(ChristmasCard.Images[2]))
         {
             <div class="col-12">
@@ -141,6 +149,7 @@
         }
 
         <div class="row mt-3">
+            @*printing av hilsningen*@
         <div class="col-12 text-center" style="color: @ChristmasCard.TextColor3">
             @if (!string.IsNullOrEmpty(@ChristmasCard.SenderName))
             {
@@ -154,17 +163,17 @@
 
 
 @code {
-    public ChristmasCard ChristmasCard { get; set; } = new ChristmasCard();
-    public string ImageFormat { get; set; } = "image/jpeg";
-    public MemoryStream NewImage { get; set; }
-    public int SelectedFont { get; set; } = 0;
-    private ChristmasCard[] ChristmasCards { get; set; }
+    public ChristmasCard ChristmasCard { get; set; } = new ChristmasCard(); @*inportering av ChristmasCard objektet som ligger i models/Christmascard.cs*@
+    public string ImageFormat { get; set; } = "image/jpeg"; @*string for bildet*@
+    public MemoryStream NewImage { get; set; } @*Memory av bildet vi henter fra bruker*@
+    public int SelectedFont { get; set; } = 0; @*int string for å definere hvilken font som skal brukes utifra valget i radioknappene*@
+    private ChristmasCard[] ChristmasCards { get; set; } @*sette *@
     private List<ChristmasCard> GeneratedChristmasCards { get; set; } = new List<ChristmasCard>();
 
 
     private async void GenerateCard()
     {
-        // Legg til generert julekort i liste
+        // Legg til generert julekort i liste 
         GeneratedChristmasCards.Add(ChristmasCard);
         // Lagre liste til Array
         ChristmasCards = GeneratedChristmasCards.ToArray();
@@ -180,15 +189,15 @@
             NewImage = new MemoryStream();
             await resizedImage.OpenReadStream().CopyToAsync(NewImage);
 
-            if (imageNumber == 1)
+            if (imageNumber == 0)
             {
                 ChristmasCard.Images[0] = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
             }
-            if (imageNumber == 2)
+            if (imageNumber == 1)
             {
                 ChristmasCard.Images[1] = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
             }
-            if (imageNumber == 3)
+            if (imageNumber == 2)
             {
                 ChristmasCard.Images[2] = $"data:{ImageFormat};base64,{Convert.ToBase64String(NewImage.ToArray())}";
             }
@@ -205,15 +214,15 @@
         {
             if (SelectedFont == 0)
             {
-                ChristmasCard.MyFont = "";
+                ChristmasCard.MyFont = "Arial, sans-serif";
             }
             else if (SelectedFont == 1)
              {
-                ChristmasCard.MyFont = "";
+                ChristmasCard.MyFont = "Courier New', monospace";
             }
              else if (SelectedFont == 2)
              {
-                ChristmasCard.MyFont = "";
+                ChristmasCard.MyFont = "Garamond, serif";
             }
         }
     }
